@@ -19,9 +19,14 @@ const googleSheets = require('./utils/googleSheets');
 dotenv.config();
 const app = express();
 
+
 // Middleware
 // Hamma URL'ga ruxsat (development uchun)
-app.use(cors());
+app.use(cors({
+  origin: '*',
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
@@ -39,10 +44,6 @@ app.use((err, req, res, next) => {
 mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
-  serverSelectionTimeoutMS: 60000,
-  socketTimeoutMS: 60000,
-  maxPoolSize: 10,
-  bufferMaxEntries: 0
 })
 .then(() => {
   console.log('✅ MongoDB successfully connected');
