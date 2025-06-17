@@ -20,10 +20,11 @@ dotenv.config();
 const app = express();
 
 // Middleware
+// Hamma URL'ga ruxsat (development uchun)
 app.use(cors({
-  origin: ['http://localhost:3000', 'https://your-domain.com'],
+  origin: '*',
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
