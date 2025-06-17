@@ -39,6 +39,10 @@ app.use((err, req, res, next) => {
 mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
+  serverSelectionTimeoutMS: 60000,
+  socketTimeoutMS: 60000,
+  maxPoolSize: 10,
+  bufferMaxEntries: 0
 })
 .then(() => {
   console.log('✅ MongoDB successfully connected');
@@ -212,6 +216,11 @@ app.get('/api/products', async (req, res) => {
   try {
     console.log('📦 Products API called with query:', req.query);
     
+    // Set CORS headers manually
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    
     const { category, minPrice, maxPrice, search, page = 1, limit = 12 } = req.query;
     
     let filter = { status: 'active' };
@@ -235,10 +244,12 @@ app.get('/api/products', async (req, res) => {
     
     console.log('🔍 Filter being used:', filter);
     
+   // Add timeout to query
     const products = await Product.find(filter)
       .limit(limit * 1)
       .skip((page - 1) * limit)
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .maxTimeMS(60000); // 60 seconds timeout
       
     const total = await Product.countDocuments(filter);
     
