@@ -35,9 +35,6 @@ const app = express();
 //   credentials: true
 // }));
 
-// Hamma origin'ga ruxsat (development uchun)
-// app.use(cors());
-
 // CORS sozlamalari
 app.use(cors({
   origin: [
@@ -53,6 +50,9 @@ app.use(cors({
 
 // Pre-flight requests uchun
 app.options('*', cors());
+
+// Hamma origin'ga ruxsat (development uchun)
+app.use(cors());
 
 // OPTIONS so'rovlari uchun
 app.options('*', cors());
