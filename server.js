@@ -21,22 +21,21 @@ const app = express();
 
 
 // // Middleware
-// // CORS sozlamalari - yangilangan
-// app.use(cors({
-//   origin: [
-//     'http://localhost:3000',
-//     'https://paket-uzb.vercel.app',
-//     'https://paket-uzb-git-main.vercel.app',
-//     'https://paket-uzb-git-main-yoqubjons-projects-546a3158.vercel.app',
-//     /^https:\/\/paket-uzb.*\.vercel\.app$/
-//   ],
-//   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-//   allowedHeaders: ['Content-Type', 'Authorization'],
-//   credentials: true
-// }));
+// CORS sozlamalari
+app.use(cors({
+  origin: [
+    'http://localhost:3000',
+    'https://paket-uzb.vercel.app',
+    'https://paket-uzb-git-main-yoqubjons-projects-546a3158.vercel.app',
+    /https:\/\/.*\.vercel\.app$/
+  ],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
+}));
 
-// Hamma origin'ga ruxsat (development uchun)
-app.use(cors());
+// Pre-flight requests uchun
+app.options('*', cors());
 
 // OPTIONS so'rovlari uchun
 app.options('*', cors());
