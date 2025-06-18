@@ -20,13 +20,26 @@ dotenv.config();
 const app = express();
 
 
-// Middleware
-// Hamma URL'ga ruxsat (development uchun)
-app.use(cors({
-  origin: '*',
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-}));
+// // Middleware
+// // CORS sozlamalari - yangilangan
+// app.use(cors({
+//   origin: [
+//     'http://localhost:3000',
+//     'https://paket-uzb.vercel.app',
+//     'https://paket-uzb-git-main.vercel.app',
+//     'https://paket-uzb-git-main-yoqubjons-projects-546a3158.vercel.app',
+//     /^https:\/\/paket-uzb.*\.vercel\.app$/
+//   ],
+//   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+//   allowedHeaders: ['Content-Type', 'Authorization'],
+//   credentials: true
+// }));
+
+// Hamma origin'ga ruxsat (development uchun)
+app.use(cors());
+
+// OPTIONS so'rovlari uchun
+app.options('*', cors());
 
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
@@ -40,17 +53,35 @@ app.use((err, req, res, next) => {
   });
 });
 
-// MongoDB connection
+// // MongoDB connection
+// mongoose.connect(process.env.MONGODB_URI, {
+//   useNewUrlParser: true,
+//   useUnifiedTopology: true,
+// })
+
+// .then(() => {
+//   console.log('✅ MongoDB successfully connected');
+//   // Initialize sample products if empty
+//   initializeSampleProducts();
+// })
+// .catch(err => console.error('❌ MongoDB connection error:', err));
+
+// MongoDB connection - timeout bilan
 mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
+  serverSelectionTimeoutMS: 30000, // 30 soniya
+  connectTimeoutMS: 30000,
+  socketTimeoutMS: 30000,
 })
 .then(() => {
   console.log('✅ MongoDB successfully connected');
-  // Initialize sample products if empty
   initializeSampleProducts();
 })
-.catch(err => console.error('❌ MongoDB connection error:', err));
+.catch(err => {
+  console.error('❌ MongoDB connection error:', err);
+  process.exit(1);
+});
 
 // Initialize sample products
 async function initializeSampleProducts() {
